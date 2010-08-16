@@ -1,10 +1,39 @@
+import os
+import sys
+
 from django import forms
 from django.conf import settings
-from django.template import Context, Template
+from django.template import Context, Template, loader
 from django.template.loader import get_template_from_string
 from django.test import TestCase
 
 from uni_form.helpers import FormHelper, Submit, Reset, Hidden, Button
+
+class TemplateTestCase(TestCase):
+    def _pre_setup(self):
+        self._template_setup()
+        super(TestCase, self)._pre_setup()
+
+    def _post_teardown(self):
+        self._template_teardown()
+        super(TestCase, self)._post_teardown()
+
+    def _template_setup(self):
+        if hasattr(self, 'template_loaders'):
+            self._old_template_loaders = settings.TEMPLATE_LOADERS
+            settings.TEMPLATE_LOADERS = self.template_loaders
+            loader.template_source_loaders = None
+        if hasattr(self, 'template_dirs'):
+            self._old_template_dirs = settings.TEMPLATE_DIRS
+            test_dir = os.path.dirname(sys.modules[self.__module__].__file__)
+            settings.TEMPLATE_DIRS = [ os.path.join(test_dir, dirname) for dirname in self.template_dirs ]
+
+    def _template_teardown(self):
+        if hasattr(self, '_old_template_loaders'):
+            settings.TEMPLATE_LOADERS = self._old_template_loaders
+            loader.template_source_loaders = None
+        if hasattr(self, '_old_template_dirs'):
+            settings.TEMPLATE_DIRS = self._old_template_dirs
 
 class TestForm(forms.Form):
     
@@ -16,7 +45,8 @@ class TestForm(forms.Form):
     last_name = forms.CharField(label="last name", max_length=30, required=True, widget=forms.TextInput())
 
 
-class TestBasicFunctionalityTags(TestCase):
+class TestBasicFunctionalityTags(TemplateTestCase):
+    template_loaders = ('django.template.loaders.app_directories.load_template_source',)
     
     def setUp(self):
         pass
@@ -55,7 +85,8 @@ class TestBasicFunctionalityTags(TestCase):
         self.assertTrue('uni-form.css' in html)
         self.assertTrue('uni-form.jquery.js' in html)
         
-class TestFormHelpers(TestCase):
+class TestFormHelpers(TemplateTestCase):
+    template_loaders = ('django.template.loaders.app_directories.load_template_source',)
     
     def setUp(self):
         pass
@@ -82,7 +113,7 @@ class TestFormHelpers(TestCase):
 {% uni_form form form_helper %}
         """)
         html = template.render(c)
-        '''
+
         self.assertTrue('class="submit submitButton"' in html)
         self.assertTrue('id="submit-id-my-submit"' in html)        
 
@@ -93,7 +124,7 @@ class TestFormHelpers(TestCase):
 
         self.assertTrue('class="button"' in html)
         self.assertTrue('id="button-id-my-button"' in html)        
-        '''
+
     def test_uni_form_helper_form_attributes(self):
         
 

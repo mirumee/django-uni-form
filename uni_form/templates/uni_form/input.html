@@ -2,7 +2,7 @@
         name="{{ input.name|slugify }}"
         value="{{ input.value }}"
         {% if input.input_type != "hidden" %}
-            class="{{ input.input_type }}"
+            class="{{ input.field_classes }}"
             id="{{ input.input_type }}-id-{{ input.name|slugify }}"
         {% endif %}
         {% if input.src %}

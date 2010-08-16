@@ -20,7 +20,7 @@
             }
         </style><![endif]-->
         <style>
-            {% include "uni-form.css" %}
+            @import url("{{ MEDIA_URL }}uni_form/uni-form.css");
         </style>
         <style>
         /* You don't need these, they are here to tune up the page */
@@ -101,7 +101,7 @@
         </style>
         
         <style>
-            {% include "default.uni-form.css" %}        
+            @import url("{{ MEDIA_URL }}uni_form/default.uni-form.css");
         </style>
 
         {% block extra_head_base %}
@@ -132,7 +132,7 @@
           </ul> 
         </div>        
 
-<script type="text/javascript">{% include "jquery.js" %}</script> 
-<script type="text/javascript">{% include "uni-form.jquery.js" %}</script>
+<script type="text/javascript" src="{{ MEDIA_URL }}uni_form/jquery.js"></script>
+<script type="text/javascript" src="{{ MEDIA_URL }}uni_form/uni-form.jquery.js"></script>
     </body>
 </html>
