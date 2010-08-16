@@ -1,0 +1,11 @@
+<input type="{{ input.input_type }}"
+        name="{{ input.name|slugify }}"
+        value="{{ input.value }}"
+        {% if input.input_type != "hidden" %}
+            class="{{ input.input_type }}"
+            id="{{ input.input_type }}-id-{{ input.name|slugify }}"
+        {% endif %}
+        {% if input.src %}
+            src="{{ MEDIA_URL }}{{ input.src }}"
+        {% endif %}
+        />
