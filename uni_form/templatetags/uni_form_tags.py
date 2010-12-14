@@ -4,6 +4,7 @@ from django import get_version # TODO: remove when pre-CSRF token templatetags a
 from django.conf import settings
 from django.template import Context, Template
 from django.template.loader import get_template
+from django.utils.safestring import mark_safe
 from django import template
 
 from django.template.defaultfilters import slugify
@@ -30,7 +31,9 @@ else:
 # concept and execution.
 ###################################################
 @register.filter
-def as_uni_form(form):
+def as_uni_form(form, helper=None):
+    if helper:
+        return mark_safe(helper.layout.render(form))
     template = get_template('uni_form/uni_form.html')
     c = Context({'form':form})
     return template.render(c)
